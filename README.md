@@ -7,5 +7,5 @@ cd build
 cmake ..
 ```
 For Linux write `make` also
-### Run Linux
+### Run on Linux
 `./NeuralEngine`
