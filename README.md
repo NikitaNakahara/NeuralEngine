@@ -1,7 +1,8 @@
 # Neural Engine
 The official repository of the Neural Engine game engine. Currently being developed by one person.
 ### Build
-```mkdir build
+```
+mkdir build
 cd build
 cmake ..
 ```
