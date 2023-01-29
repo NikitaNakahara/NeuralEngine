@@ -34,7 +34,7 @@ namespace Graphic {
 		}
 
 		if (mMainLoopIsStarted) {
-			return WReturnCodes::W_MAIN_LOOP_ALSO_STARTED_ERROR;
+			return WReturnCodes::W_MAIN_LOOP_ALREADY_STARTED_ERROR;
 		}
 
 		while (!glfwWindowShouldClose(mWindow)) {
