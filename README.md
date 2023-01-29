@@ -2,6 +2,8 @@
 The official repository of the Neural Engine game engine. Currently being developed by one person.
 ### Build
 ```
+git submodule init
+git submodule update
 mkdir build
 cd build
 cmake ..
