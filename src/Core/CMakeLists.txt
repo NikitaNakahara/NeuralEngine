@@ -4,6 +4,15 @@ set(MODULE_NAME Core)
 
 set(SRC_FILES
 	src/main.cpp
+	src/Application.cpp
+	src/Log.cpp
 )
 
-add_executable(${MODULE_NAME} ${SRC_FILES})
+set(INCLUDE_FILES
+	src/Application.hpp
+	src/Log.hpp
+)
+
+add_executable(${MODULE_NAME} ${SRC_FILES} ${INCLUDE_FILES})
+
+target_link_libraries(${MODULE_NAME} Graphic)

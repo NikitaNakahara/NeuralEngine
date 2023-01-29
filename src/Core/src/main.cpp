@@ -1,7 +1,8 @@
 #include <iostream>
 
-int main() {
-	std::cout << "Hello, world\n";
+#include "Application.hpp"
 
-	return 0;
+int main() {
+	Core::Application app = Core::Application();
+	return app.init();
 }
