@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include <string>
+
+#include "Renderer.hpp"
 
 enum WReturnCodes {
 	W_SUCCESS,
@@ -32,5 +32,7 @@ namespace Graphic {
 		GLFWwindow* mWindow = nullptr;
 
 		bool mMainLoopIsStarted = false;
+
+		Renderer mRenderer;
 	};
 }

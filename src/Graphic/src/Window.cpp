@@ -23,7 +23,14 @@ namespace Graphic {
 			return WReturnCodes::W_CREATE_WINDOW_ERROR;
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		glfwMakeContextCurrent(mWindow);
+
+		mRenderer = Renderer();
+		mRenderer.init();
 
 		return WReturnCodes::W_SUCCESS;
 	}
@@ -38,6 +45,8 @@ namespace Graphic {
 		}
 
 		while (!glfwWindowShouldClose(mWindow)) {
+			mRenderer.render();
+
 			glfwSwapBuffers(mWindow);
 			glfwPollEvents();
 		}
