@@ -6,6 +6,7 @@
 namespace Graphic {
     Window::Window(int width, int height, std::string title, bool createFullscreen)
         : _width(width), _height(height), _title(title) {
+        System::logInfo("Window", "start creating window");
         if (!glfwInit()) {
             System::logCritical("glfw error", "can't init GLFW");
             return;
@@ -21,6 +22,8 @@ namespace Graphic {
             System::logCritical("glfw error", "can't create window");
             return;
         }
+
+        System::logInfo("Window", "window creating success");
 
         glfwMakeContextCurrent(_pWindow);
 
