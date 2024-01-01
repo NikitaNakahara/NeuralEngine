@@ -7,6 +7,8 @@ set(INCLUDE ${INCLUDE_DIR}/Window.hpp)
 add_library(Graphic STATIC ${SRC} ${INCLUDE_DIR})
 target_include_directories(Graphic PUBLIC include)
 
+target_link_libraries(Graphic System)
+
 add_subdirectory(../../libs/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(Graphic glad)
 

@@ -4,5 +4,6 @@ set(PROJECT_NAME NeuralEngine)
 
 project(${PROJECT_NAME})
 
+add_subdirectory(src/System)
 add_subdirectory(src/Graphic)
 add_subdirectory(src/Core)

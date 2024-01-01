@@ -5,3 +5,4 @@ set(SRC src/main.cpp)
 add_executable(${PROJECT_NAME} ${SRC})
 
 target_link_libraries(${PROJECT_NAME} Graphic)
+target_link_libraries(${PROJECT_NAME} System)

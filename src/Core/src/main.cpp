@@ -3,7 +3,7 @@
 #include <Graphic/Window.hpp>
 
 int main() {
-    Window window = Window(1000, 800, "NeuralEngine");
+    Graphic::Window window = Graphic::Window(1920, 1080, "NeuralEngine", true);
 
     return 0;
 }

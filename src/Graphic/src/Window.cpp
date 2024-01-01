@@ -1,35 +1,45 @@
 #include <glad/glad.h>
 
 #include <Graphic/Window.hpp>
+#include <System/Log.hpp>
 
-#include <iostream>
+namespace Graphic {
+    Window::Window(int width, int height, std::string title, bool createFullscreen)
+        : _width(width), _height(height), _title(title) {
+        if (!glfwInit()) {
+            System::logCritical("glfw error", "can't init GLFW");
+            return;
+        }
 
-Window::Window(int width, int height, std::string title)
-    : _width(width), _height(height), _title(title) {
-    if (!glfwInit()) {
-        std::cout << "can't init glfw\n";
-        return;
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+
+        GLFWmonitor* monitor = nullptr;
+        if (createFullscreen) monitor = glfwGetPrimaryMonitor();
+        _pWindow = glfwCreateWindow(_width, _height, _title.c_str(), monitor, nullptr);
+        if (_pWindow == nullptr) {
+            System::logCritical("glfw error", "can't create window");
+            return;
+        }
+
+        glfwMakeContextCurrent(_pWindow);
+
+        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+        mainLoop();
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    void Window::mainLoop() {
+        while(!glfwWindowShouldClose(_pWindow)) {
+            if (glfwGetKey(_pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+                glfwSetWindowShouldClose(_pWindow, true);
+            }
 
-    _pWindow = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
-    if (_pWindow == nullptr) return;
+            glClearColor(0.0, 0.0, 1.0, 1.0);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-    glfwMakeContextCurrent(_pWindow);
-
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-    mainLoop();
-}
-
-void Window::mainLoop() {
-    while(!glfwWindowShouldClose(_pWindow)) {
-        glClearColor(0.0, 0.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glfwSwapBuffers(_pWindow);
-        glfwPollEvents();
+            glfwSwapBuffers(_pWindow);
+            glfwPollEvents();
+        }
     }
 }

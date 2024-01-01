@@ -3,15 +3,17 @@
 #include <string>
 #include <GLFW/glfw3.h>
 
-class Window {
-public:
-    Window(int width, int height, std::string title);
-    ~Window() = default;
+namespace Graphic {
+    class Window {
+    public:
+        Window(int width, int height, std::string title, bool createFullscreen);
+        ~Window() = default;
 
-private:
-    void mainLoop();
+    private:
+        void mainLoop();
 
-    GLFWwindow* _pWindow;
-    int _width, _height;
-    std::string _title;
-};
+        GLFWwindow* _pWindow;
+        int _width, _height;
+        std::string _title;
+    };
+}
