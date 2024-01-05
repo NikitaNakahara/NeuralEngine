@@ -2,24 +2,25 @@
 
 #include <string>
 
-#define GLSL 1
-
 namespace Graphic {
     class Shader {
     public:
-        Shader() = default;
-        Shader(int __language);
+        Shader();
         ~Shader() = default;
 
         void use();
 
-    private:
-        int _language;
-        int _compile(std::string __data, int __mode);
-        void _createProgram(int __vertex, int __fragment);
-        std::string _loadFile(std::string __name);
+        unsigned int getProgram() const { return _program; }
 
-        int _program = 0;
-        std::string _path = "../res/shaders/opengl/";
+        void operator=(const Shader& __shader) { this->_program = __shader.getProgram(); }
+
+    private:
+        unsigned int _compile(std::string __data, unsigned int __type);
+        void _linkProgram(unsigned int __vertex, unsigned int __fragment);
+        std::string _readFile(std::string __name);
+
+        const std::string _path = "../res/shaders/opengl/";
+
+        unsigned int _program; 
     };
 }

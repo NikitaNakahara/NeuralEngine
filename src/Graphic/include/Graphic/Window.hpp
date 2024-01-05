@@ -17,6 +17,7 @@ namespace Graphic {
         GLFWwindow* _pWindow;
         int _width, _height;
         std::string _title;
+
         Renderer _renderer;
     };
 }

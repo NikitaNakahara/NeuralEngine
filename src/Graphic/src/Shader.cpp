@@ -1,85 +1,70 @@
 #include <Graphic/Shader.hpp>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <System/Log.hpp>
 
 #include <fstream>
 #include <vector>
-#include <stdlib.h>
 
-#include <System/Log.hpp>
+#include <glad/glad.h>
 
 namespace Graphic {
-    Shader::Shader(int __language) : _language(__language) {
+    Shader::Shader() {
+        unsigned int vertex, fragment;
+        
+        vertex = _compile(_readFile("vertex.glsl"), GL_VERTEX_SHADER);
+        fragment = _compile(_readFile("fragment.glsl"), GL_FRAGMENT_SHADER);
 
-        int vertex, fragment;
-        vertex = _compile(_loadFile("vertex"), GL_VERTEX_SHADER);
-        fragment = _compile(_loadFile("vertex"), GL_FRAGMENT_SHADER);
-
-        _createProgram(vertex, fragment);
+        _linkProgram(vertex, fragment);
     }
 
-    void Shader::use() {
-        if (_language == GLSL) glUseProgram(_program);
-    }
+    unsigned int Shader::_compile(std::string __data, unsigned int __type) {
+        unsigned int shader = glCreateShader(__type);
 
-    int Shader::_compile(std::string __data, int __mode) {
-        if (_language == GLSL) {
-            unsigned int shader = glCreateShader(__mode);
+        const char* data = __data.c_str();
+        glShaderSource(shader, 1, &data, NULL);
+        glCompileShader(shader);
 
-            const char* data = __data.c_str();
-            glShaderSource(shader, 1, &data, NULL);
-            glCompileShader(shader);
-
-            GLint success;
-            GLchar infoLog[512];
-            glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-            if(!success) {
-                glGetShaderInfoLog(shader, 512, NULL, infoLog);
-                System::logCritical("Shader", "failed compile shader: " + std::string(infoLog));
-            }
-
-            return shader;
+        int success;
+        char infoLog[512];
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(shader, 512, NULL, infoLog);
+            System::logCritical("Shader", "compile error: " + std::string(infoLog));
         }
 
-        return 0;
+        return shader;
     }
 
-    void Shader::_createProgram(int __vertex, int __fragment) {
-        if (_language == GLSL) {
-            _program = glCreateProgram();
+    void Shader::_linkProgram(unsigned int __vertex, unsigned int __fragment) {
+        _program = glCreateProgram();
 
-            glAttachShader(_program, __vertex);
-            glAttachShader(_program, __fragment);
-            glLinkProgram(_program);
+        glAttachShader(_program, __vertex);
+        glAttachShader(_program, __fragment);
+        glLinkProgram(_program);
 
-            GLint success;
-            GLchar infoLog[512];
-            glGetProgramiv(_program, GL_LINK_STATUS, &success);
-            if (!success) {
-                glGetProgramInfoLog(_program, 512, NULL, infoLog);
-                System::logCritical("Shader", "failed link shader program: " + std::string(infoLog));
-            }
-
-            glDeleteShader(__vertex);
-            glDeleteShader(__fragment);
+        int success;
+        char infoLog[512];
+        glGetProgramiv(_program, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(_program, 512, NULL, infoLog);
+            System::logCritical("Shader", "link error: " + std::string(infoLog));
         }
+
+        glDeleteShader(__vertex);
+        glDeleteShader(__fragment);
+
+        System::logInfo("Shader", "linked: " + std::to_string(_program));
     }
 
-    std::string Shader::_loadFile(std::string __name) {
+    std::string Shader::_readFile(std::string __name) {
         std::string fileType;
-        if (_language == GLSL) fileType = ".glsl";
 
-        std::string path = _path + __name + fileType;
+        std::string path = _path + __name;
 
         std::ifstream stream = std::ifstream(path);
 
-        char* realPath = realpath(path.c_str(), nullptr);
-        if (realPath == nullptr) System::logError("Shader error", "file for path \"" + path + "\" isn't exists");
         if (!stream) {
-            if (realPath == nullptr) System::logCritical("Shader error", "can't load file for path: " + path);
-            else System::logCritical("Shader error", "can't load file for path: " + std::string(realPath));
+            System::logCritical("Shader error", "can't load file for path: " + path);
         }
 
         std::vector<std::string> lines;
@@ -89,11 +74,18 @@ namespace Graphic {
             lines.push_back(shaderLine);
         }
 
+        stream.clear();
+
         std::string result = "";
         for (std::string line : lines) {
             result += line + '\n';
         }
 
         return result;
+    }
+
+    void Shader::use() {
+        System::logInfo("Shader", "using: " + std::to_string(_program));
+        glUseProgram(_program);
     }
 }

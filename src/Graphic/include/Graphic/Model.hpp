@@ -5,7 +5,7 @@
 namespace Graphic {
     class Model {
     public:
-        Model(Shader __shader);
+        Model();
         ~Model() = default;
 
         void draw();
@@ -14,7 +14,7 @@ namespace Graphic {
 
     private:
         void _create();
-
+        
         unsigned int _VBO, _VAO;
         Shader _shader;
     };
