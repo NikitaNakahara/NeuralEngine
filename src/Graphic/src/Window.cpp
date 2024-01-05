@@ -49,9 +49,12 @@ namespace Graphic {
             System::logDebug("Renderer", "GL loader was initialized");
         }
 
+        glViewport(0, 0, __width, __height);
+
         Shader shader = Shader();
         Model model = Model();
         model.setShader(shader);
+        model.addTexture(System::ResourceManager::loadTexture("container.jpg"));
         
         _renderer = Renderer();
         _renderer.addModel(model);

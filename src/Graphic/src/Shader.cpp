@@ -1,6 +1,7 @@
 #include <Graphic/Shader.hpp>
 
 #include <System/Log.hpp>
+#include <System/ResourceManager.hpp>
 
 #include <fstream>
 #include <vector>
@@ -11,8 +12,9 @@ namespace Graphic {
     Shader::Shader() {
         unsigned int vertex, fragment;
         
-        vertex = _compile(_readFile("vertex.glsl"), GL_VERTEX_SHADER);
-        fragment = _compile(_readFile("fragment.glsl"), GL_FRAGMENT_SHADER);
+        System::SShader sshader = System::ResourceManager::loadShader("opengl/ambient");
+        vertex = _compile(sshader.vertex, GL_VERTEX_SHADER);
+        fragment = _compile(sshader.fragment, GL_FRAGMENT_SHADER);
 
         _linkProgram(vertex, fragment);
     }
@@ -52,40 +54,15 @@ namespace Graphic {
 
         glDeleteShader(__vertex);
         glDeleteShader(__fragment);
-
-        System::logInfo("Shader", "linked: " + std::to_string(_program));
-    }
-
-    std::string Shader::_readFile(std::string __name) {
-        std::string fileType;
-
-        std::string path = _path + __name;
-
-        std::ifstream stream = std::ifstream(path);
-
-        if (!stream) {
-            System::logCritical("Shader error", "can't load file for path: " + path);
-        }
-
-        std::vector<std::string> lines;
-
-        std::string shaderLine = "";
-        while (getline(stream, shaderLine)) {
-            lines.push_back(shaderLine);
-        }
-
-        stream.clear();
-
-        std::string result = "";
-        for (std::string line : lines) {
-            result += line + '\n';
-        }
-
-        return result;
     }
 
     void Shader::use() {
-        System::logInfo("Shader", "using: " + std::to_string(_program));
         glUseProgram(_program);
     }
+
+    void Shader::addTexture(unsigned int __texture, int __index, std::string __name)  {
+            glActiveTexture(GL_TEXTURE0 + __index);
+            glBindTexture(GL_TEXTURE_2D, __texture);
+            glUniform1i(glGetUniformLocation(_program, __name.c_str()), __index);
+        }
 }

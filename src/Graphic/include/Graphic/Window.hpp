@@ -10,7 +10,6 @@ namespace Graphic {
     public:
         Window(int __width, int __height, std::string __title, bool __createFullscreen);
         ~Window() = default;
-
     private:
         void _mainLoop();
 

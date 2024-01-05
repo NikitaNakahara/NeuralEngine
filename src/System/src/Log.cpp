@@ -24,24 +24,24 @@ std::string getTime() {
 }
 
 namespace System {
-    void logDebug(std::string title, std::string text) {
-        printf("%s [\033[0;36mDEBUG\033[0;0m] %s : %s\n", getTime().c_str(), title.c_str(), text.c_str());
+    void logDebug(std::string __title, std::string __text) {
+        printf("%s [\033[0;36mDEBUG\033[0;0m] %s : %s\n", getTime().c_str(), __title.c_str(), __text.c_str());
     }
 
-    void logInfo(std::string title, std::string text) {
-        printf("%s [\033[0;32mINFO\033[0;0m] %s : %s\n", getTime().c_str(), title.c_str(), text.c_str());
+    void logInfo(std::string __title, std::string __text) {
+        printf("%s [\033[0;32mINFO\033[0;0m] %s : %s\n", getTime().c_str(), __title.c_str(), __text.c_str());
     }
 
-    void logWarning(std::string title, std::string text) {
-        printf("%s [\033[0;33mWARNING\033[0;0m] %s : %s\n", getTime().c_str(), title.c_str(), text.c_str());
+    void logWarning(std::string __title, std::string __text) {
+        printf("%s [\033[0;33mWARNING\033[0;0m] %s : %s\n", getTime().c_str(), __title.c_str(), __text.c_str());
     }
 
-    void logError(std::string title, std::string text) {
-        printf("%s [\033[0;31mERROR\033[0;0m] %s : %s\n", getTime().c_str(), title.c_str(), text.c_str());
+    void logError(std::string __title, std::string __text) {
+        printf("%s [\033[0;31mERROR\033[0;0m] %s : %s\n", getTime().c_str(), __title.c_str(), __text.c_str());
     }
 
-    void logCritical(std::string title, std::string text, bool stop, int status) {
-        printf("%s [\033[0;41mCRITICAL\033[0;0m] %s : %s\n", getTime().c_str(), title.c_str(), text.c_str());
+    void logCritical(std::string __title, std::string __text, bool stop, int status) {
+        printf("%s [\033[0;41mCRITICAL\033[0;0m] %s : %s\n", getTime().c_str(), __title.c_str(), __text.c_str());
 
         if (stop) {
             exit(status);
