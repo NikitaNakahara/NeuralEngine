@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Graphic/Model.hpp>
+#include <Graphic/Scene.hpp>
 
 #include <vector>
 
@@ -12,9 +12,9 @@ namespace Graphic {
 
         void render();
 
-        void addModel(Model __model) { _models.push_back(__model); }
+        void setScene(Scene __scene) { _scene = __scene; }
 
     private:
-        std::vector<Model> _models = std::vector<Model>();
+        Scene _scene;
     };
 }

@@ -4,11 +4,10 @@
 #include <Graphic/Shader.hpp>
 #include <Graphic/Model.hpp>
 #include <Graphic/Camera.hpp>
+#include <Graphic/Scene.hpp>
 #include <System/Log.hpp>
 
 namespace Graphic {
-    Camera camera = Camera();
-
     Window::Window(int __width, int __height, std::string __title, bool __createFullscreen)
         : _width(__width), _height(__height), _title(__title) {
         System::logInfo("Window", "start creating window");
@@ -56,40 +55,17 @@ namespace Graphic {
         glViewport(0, 0, __width, __height);
         glEnable(GL_DEPTH_TEST);
 
-        glfwSetKeyCallback(_pWindow, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
-            camera.move(key);
-        });
-
-        glfwSetCursorPosCallback(_pWindow, [](GLFWwindow* window, double xpos, double ypos) {
-            camera.rotate(xpos, ypos);
-        });
-
-        Shader shader = Shader();
-
-        glm::vec3 cubePositions[] = {
-            glm::vec3( 0.0f,  0.0f,  0.0f), 
-            glm::vec3( 2.0f,  5.0f, -15.0f), 
-            glm::vec3(-1.5f, -2.2f, -2.5f),  
-            glm::vec3(-3.8f, -2.0f, -12.3f),  
-            glm::vec3( 2.4f, -0.4f, -3.5f),  
-            glm::vec3(-1.7f,  3.0f, -7.5f),  
-            glm::vec3( 1.3f, -2.0f, -2.5f),  
-            glm::vec3( 1.5f,  2.0f, -2.5f), 
-            glm::vec3( 1.5f,  0.2f, -1.5f), 
-            glm::vec3(-1.3f,  1.0f, -1.5f)  
-        };
-       
         _renderer = Renderer();
 
-        for (int i = 0; i < sizeof(cubePositions) / sizeof(glm::vec3); i++) {
-            Model model = Model();
-            model.setCameraPtr(&camera);
-            model.setShader(shader);
-            model.addTexture(System::ResourceManager::loadTexture("container.jpg"));
-            model.setTranslate(cubePositions[i]);
-            model.setRotation(glm::vec3(1.0f, 0.3f, 0.5f), 20.0f * i);
-            _renderer.addModel(model);
-        }
+        Model model = Model();
+        model.setShader(Shader());
+        model.addTexture(System::ResourceManager::loadTexture("container.jpg"));
+
+        Scene scene = Scene();
+        scene.addCamera(Camera(_pWindow));
+        scene.addModel(model);
+
+        _renderer.setScene(scene);
 
         _mainLoop();
     }

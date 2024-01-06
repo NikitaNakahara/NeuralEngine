@@ -1,6 +1,6 @@
-#include <Graphic/Renderer.hpp>
-
 #include <glad/glad.h>
+
+#include <Graphic/Renderer.hpp>
 
 
 namespace Graphic {
@@ -8,8 +8,6 @@ namespace Graphic {
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (Model model : _models) {
-            model.draw();
-        }
+        _scene.draw();
     }
 }

@@ -1,6 +1,7 @@
+#include <glad/glad.h>
+
 #include <Graphic/Model.hpp>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <System/Log.hpp>
 

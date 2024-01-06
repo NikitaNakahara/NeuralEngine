@@ -2,10 +2,25 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <GLFW/glfw3.h>
+#include <System/Log.hpp>
 
 namespace Graphic {
-    void Camera::move(int __key) {
+    int gKey = 0;
+    glm::vec2 gCursorPos = glm::vec3(0.0f);
+
+    Camera::Camera(GLFWwindow* __pWindow) {
+        glfwSetKeyCallback(__pWindow, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
+            gKey = key;
+        });
+
+        glfwSetCursorPosCallback(__pWindow, [](GLFWwindow* window, double xpos, double ypos) {
+            gCursorPos = glm::vec2(xpos, ypos);
+        });
+
+
+    }
+
+    void Camera::_move(int __key) {
         GLfloat cameraSpeed = 0.05f;
         if(__key == GLFW_KEY_W)
             _cameraPos += cameraSpeed * _cameraFront;
@@ -17,7 +32,7 @@ namespace Graphic {
             _cameraPos += glm::normalize(glm::cross(_cameraFront, _cameraUp)) * cameraSpeed;  
     }
 
-    void Camera::rotate(double __x, double __y) {
+    void Camera::_rotate(double __x, double __y) {
         if(_firstMouse) {
             _lastX = __x;
             _lastY = __y;
@@ -49,6 +64,10 @@ namespace Graphic {
     }
 
     glm::mat4 Camera::getLookAt() {
-        return glm::lookAt(_cameraPos, _cameraUp + _cameraFront, _cameraUp);
+        _move(gKey);
+        gKey = 0;
+        _rotate(gCursorPos.x, gCursorPos.y);
+
+        return glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _cameraUp);
     }
 }

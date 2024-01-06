@@ -1,8 +1,22 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(SRC src/Window.cpp src/Shader.cpp src/Model.cpp src/Renderer.cpp src/Camera.cpp)
+set(SRC 
+    src/Window.cpp 
+    src/Shader.cpp 
+    src/Model.cpp 
+    src/Renderer.cpp 
+    src/Camera.cpp
+    src/Scene.cpp
+)
 set(INCLUDE_DIR include/Graphic)
-set(INCLUDE ${INCLUDE_DIR}/Window.hpp ${INCLUDE_DIR}/Shader.hpp ${INCLUDE_DIR}/Model.hpp ${INCLUDE_DIR}/Renderer.hpp ${INCLUDE_DIR}/Camera.hpp)
+set(INCLUDE 
+    ${INCLUDE_DIR}/Window.hpp 
+    ${INCLUDE_DIR}/Shader.hpp 
+    ${INCLUDE_DIR}/Model.hpp 
+    ${INCLUDE_DIR}/Renderer.hpp 
+    ${INCLUDE_DIR}/Camera.hpp
+    ${INCLUDE_DIR}/Scene.hpp
+)
 
 add_library(Graphic STATIC ${SRC} ${INCLUDE_DIR})
 target_include_directories(Graphic PUBLIC include)

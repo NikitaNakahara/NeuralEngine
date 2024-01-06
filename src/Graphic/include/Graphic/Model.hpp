@@ -23,7 +23,6 @@ namespace Graphic {
 
         void setCameraPtr(Camera* __ptr) { _pCamera = __ptr; }
 
-
     private:
         void _create();
         
@@ -32,7 +31,7 @@ namespace Graphic {
         Shader _shader;
         std::vector<System::STexture> _textures = std::vector<System::STexture>();
         glm::vec3 _translate = glm::vec3(0.0f);
-        glm::vec3 _rotate = glm::vec3(0.0f);
+        glm::vec3 _rotate = glm::vec3(1.0f);
         float _angle = 0.0f;
     };
 }
