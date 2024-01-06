@@ -8,6 +8,8 @@
 
 #include <glad/glad.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Graphic {
     Shader::Shader() {
         unsigned int vertex, fragment;
@@ -60,9 +62,13 @@ namespace Graphic {
         glUseProgram(_program);
     }
 
-    void Shader::addTexture(unsigned int __texture, int __index, std::string __name)  {
-            glActiveTexture(GL_TEXTURE0 + __index);
-            glBindTexture(GL_TEXTURE_2D, __texture);
-            glUniform1i(glGetUniformLocation(_program, __name.c_str()), __index);
-        }
+    void Shader::setTexture(unsigned int __texture, int __index, std::string __name)  {
+        glActiveTexture(GL_TEXTURE0 + __index);
+        glBindTexture(GL_TEXTURE_2D, __texture);
+        glUniform1i(glGetUniformLocation(_program, __name.c_str()), __index);
+    }
+
+    void Shader::setMatrix(glm::mat4 __matrix, std::string __name) {
+        glUniformMatrix4fv(glGetUniformLocation(_program, __name.c_str()), 1, GL_FALSE, glm::value_ptr(__matrix));
+    }
 }

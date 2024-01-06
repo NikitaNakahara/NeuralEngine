@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 namespace Graphic {
     class Shader {
     public:
@@ -14,7 +16,8 @@ namespace Graphic {
 
         void operator=(const Shader& __shader) { this->_program = __shader.getProgram(); }
 
-        void addTexture(unsigned int __texture,  int __index, std::string __name);
+        void setTexture(unsigned int __texture,  int __index, std::string __name);
+        void setMatrix(glm::mat4 __matrix, std::string __name);
 
     private:
         unsigned int _compile(std::string __data, unsigned int __type);
