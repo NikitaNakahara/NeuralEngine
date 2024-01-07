@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include <Graphic/Window.hpp>
+#include <Graphic/Graphic.hpp>
 
 int main() {
-    Graphic::Window window = Graphic::Window(1920, 1080, "NeuralEngine", true);
+    Graphic::MyWindow window = Graphic::createWindow(800, 600, "Neural Engine");
 
     return 0;
 }

@@ -1,48 +1,43 @@
-#include <glad/glad.h>
-
-#include <Graphic/Window.hpp>
+#include "Window.hpp"
 #include <System/Log.hpp>
 
+#include <unistd.h>
+
 namespace Graphic {
-    Window::Window(int width, int height, std::string title, bool createFullscreen)
-        : _width(width), _height(height), _title(title) {
-        System::logInfo("Window", "start creating window");
-        if (!glfwInit()) {
-            System::logCritical("glfw error", "can't init GLFW");
-            return;
+    MyWindow::MyWindow(int __width, int __height, std::string __title, bool __createFullscreen)
+        : _width(__width), _height(__height), _title(__title) {
+        #if defined(__linux__)
+        _pDisplay = XOpenDisplay(nullptr);
+        if (_pDisplay == nullptr) {
+            System::logCritical("Window", "can't create X-11 device");
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+        int screen = DefaultScreen(_pDisplay);
+        _window = XCreateSimpleWindow(
+            _pDisplay,
+            RootWindow(_pDisplay, screen),
+            100, 100,
+            __width, __height,
+            0, 0, WhitePixel(_pDisplay, screen)
+        );
 
-        GLFWmonitor* monitor = nullptr;
-        if (createFullscreen) monitor = glfwGetPrimaryMonitor();
-        _pWindow = glfwCreateWindow(_width, _height, _title.c_str(), monitor, nullptr);
-        if (_pWindow == nullptr) {
-            System::logCritical("glfw error", "can't create window");
-            return;
-        }
+        XMapWindow(_pDisplay, _window);
 
-        System::logInfo("Window", "window creating success");
+        XFlush(_pDisplay);
 
-        glfwMakeContextCurrent(_pWindow);
+        sleep(5);
 
-        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-        mainLoop();
+        #endif
     }
 
-    void Window::mainLoop() {
-        while(!glfwWindowShouldClose(_pWindow)) {
-            if (glfwGetKey(_pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-                glfwSetWindowShouldClose(_pWindow, true);
-            }
+    MyWindow::~MyWindow() {
+        #if defined(__linux__)
+        XDestroyWindow(_pDisplay, _window);
+        XCloseDisplay(_pDisplay);
+        #endif
+    }
 
-            glClearColor(0.0, 0.0, 1.0, 1.0);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            glfwSwapBuffers(_pWindow);
-            glfwPollEvents();
-        }
+    void MyWindow::draw() {
+        
     }
 }
