@@ -1,43 +1,110 @@
 #include "Window.hpp"
 #include <System/Log.hpp>
 
-#include <unistd.h>
+#include <X11/Xutil.h>
+
+#include <GL/gl.h>
+#include <GL/glx.h>
 
 namespace Graphic {
-    MyWindow::MyWindow(int __width, int __height, std::string __title, bool __createFullscreen)
+    struct WndID {
+        #if defined(__linux__)
+        unsigned long windowID = 0;
+        Display* pDisplay;
+        GLXContext glContext;
+        #endif
+    };
+
+    MyWindow::MyWindow(int __width, int __height, std::string __title, bool __createFullscreen, WndID* __parentID)
         : _width(__width), _height(__height), _title(__title) {
         #if defined(__linux__)
-        _pDisplay = XOpenDisplay(nullptr);
-        if (_pDisplay == nullptr) {
+        XSetWindowAttributes attrs;
+        XSizeHints sizeHint;
+        XClassHint classHint;
+
+        char* propertyData;
+        char* className = "NeuralEngine";
+        char* resName = "NeuralEngine";
+        char* iconName;
+
+        _id = (WndID*)malloc(sizeof(WndID));
+        if (_id == nullptr) {
+            System::logCritical("Window", "can't init memory for WndID");
+        }
+
+        if (__parentID == nullptr) _id->pDisplay = XOpenDisplay(nullptr);
+        else _id->pDisplay = __parentID->pDisplay;
+        if (_id->pDisplay == nullptr) {
             System::logCritical("Window", "can't create X-11 device");
         }
 
-        int screen = DefaultScreen(_pDisplay);
-        _window = XCreateSimpleWindow(
-            _pDisplay,
-            RootWindow(_pDisplay, screen),
-            100, 100,
-            __width, __height,
-            0, 0, WhitePixel(_pDisplay, screen)
-        );
+        int screen =        DefaultScreen(_id->pDisplay);
+        Window root =       RootWindow(_id->pDisplay, screen);
+        int background =    WhitePixel(_id->pDisplay, screen);
+        int depth =         DefaultDepth(_id->pDisplay, screen);
+        Visual* visual =    DefaultVisual(_id->pDisplay, screen);
 
-        XMapWindow(_pDisplay, _window);
+        attrs.background_pixel = background;
 
-        XFlush(_pDisplay);
+        if (__parentID == nullptr) {
+            _id->windowID = XCreateWindow(
+                _id->pDisplay,
+                RootWindow(_id->pDisplay, screen),
+                100, 100,
+                __width, __height,
+                0, depth, InputOutput, visual, CWBackPixel, &attrs
+            );
+        } else _id->windowID = __parentID->windowID;
 
-        sleep(5);
+        XStoreName(_id->pDisplay, _id->windowID, __title.c_str());
+        XSetIconName(_id->pDisplay, _id->windowID, __title.c_str());
+
+        sizeHint.flags = PMinSize | PMaxSize | PResizeInc;
+        sizeHint.min_width = __width;
+        sizeHint.min_height = __height;
+        sizeHint.max_width = 1920;
+        sizeHint.max_height = 1080;
+        sizeHint.width_inc = 1;
+        sizeHint.height_inc = 1;
+        XSetWMNormalHints(_id->pDisplay, _id->windowID, &sizeHint);
+
+        classHint.res_name = resName;
+        classHint.res_class = className;
+        XSetClassHint(_id->pDisplay, _id->windowID, &classHint);
+
+        XMapWindow(_id->pDisplay, _id->windowID);
+
+        XFlush(_id->pDisplay);
 
         #endif
+    }
+
+    void MyWindow::initGraphicContext() {
+        int args[5] = {
+            GLX_RGBA,
+            GLX_DEPTH_SIZE, 24,
+            GLX_DOUBLEBUFFER,
+            None
+        };
+        XVisualInfo *visual = glXChooseVisual(_id->pDisplay, 0, args);
+
+        _id->glContext = glXCreateContext(_id->pDisplay, visual, 0, True);
+        glXMakeCurrent(_id->pDisplay, _id->windowID, _id->glContext);
     }
 
     MyWindow::~MyWindow() {
         #if defined(__linux__)
-        XDestroyWindow(_pDisplay, _window);
-        XCloseDisplay(_pDisplay);
+        XDestroyWindow(_id->pDisplay, _id->windowID);
+        XCloseDisplay(_id->pDisplay);
+        glXDestroyContext(_id->pDisplay, _id->glContext);
         #endif
+        free(_id);
     }
 
     void MyWindow::draw() {
-        
+        glClearColor(0.0, 0.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glXSwapBuffers(_id->pDisplay, _id->windowID);
     }
 }
