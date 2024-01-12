@@ -9,9 +9,8 @@
 namespace Graphic {
     struct WndID {
         #if defined(__linux__)
-        unsigned long windowID = 0;
+        unsigned long id = 0;
         Display* pDisplay;
-        GLXContext glContext;
         #endif
     };
 
@@ -47,39 +46,47 @@ namespace Graphic {
         attrs.background_pixel = background;
 
         if (__parentID == nullptr) {
-            _id->windowID = XCreateWindow(
+            _id->id = XCreateWindow(
                 _id->pDisplay,
                 RootWindow(_id->pDisplay, screen),
                 100, 100,
                 __width, __height,
                 0, depth, InputOutput, visual, CWBackPixel, &attrs
             );
-        } else _id->windowID = __parentID->windowID;
+        } else _id->id = __parentID->id;
 
-        XStoreName(_id->pDisplay, _id->windowID, __title.c_str());
-        XSetIconName(_id->pDisplay, _id->windowID, __title.c_str());
+        XStoreName(_id->pDisplay, _id->id, __title.c_str());
+        XSetIconName(_id->pDisplay, _id->id, __title.c_str());
 
         sizeHint.flags = PMinSize | PMaxSize | PResizeInc;
-        sizeHint.min_width = __width;
-        sizeHint.min_height = __height;
+        sizeHint.min_width = 0;
+        sizeHint.min_height = 0;
         sizeHint.max_width = 1920;
         sizeHint.max_height = 1080;
         sizeHint.width_inc = 1;
         sizeHint.height_inc = 1;
-        XSetWMNormalHints(_id->pDisplay, _id->windowID, &sizeHint);
+        XSetWMNormalHints(_id->pDisplay, _id->id, &sizeHint);
 
         classHint.res_name = resName;
         classHint.res_class = className;
-        XSetClassHint(_id->pDisplay, _id->windowID, &classHint);
+        XSetClassHint(_id->pDisplay, _id->id, &classHint);
 
-        XMapWindow(_id->pDisplay, _id->windowID);
+        XMapWindow(_id->pDisplay, _id->id);
 
         XFlush(_id->pDisplay);
-
         #endif
     }
 
-    void MyWindow::initGraphicContext() {
+    MyWindow::~MyWindow() {
+        #if defined(__linux__)
+        XDestroyWindow(_id->pDisplay, _id->id);
+        XCloseDisplay(_id->pDisplay);
+        glXDestroyContext(_id->pDisplay, _glContext);
+        #endif
+        free(_id);
+    }
+
+    void MyWindow::initOpenGLContext() {
         int args[5] = {
             GLX_RGBA,
             GLX_DEPTH_SIZE, 24,
@@ -87,24 +94,20 @@ namespace Graphic {
             None
         };
         XVisualInfo *visual = glXChooseVisual(_id->pDisplay, 0, args);
-
-        _id->glContext = glXCreateContext(_id->pDisplay, visual, 0, True);
-        glXMakeCurrent(_id->pDisplay, _id->windowID, _id->glContext);
-    }
-
-    MyWindow::~MyWindow() {
-        #if defined(__linux__)
-        XDestroyWindow(_id->pDisplay, _id->windowID);
-        XCloseDisplay(_id->pDisplay);
-        glXDestroyContext(_id->pDisplay, _id->glContext);
-        #endif
-        free(_id);
+        _glContext = glXCreateContext(_id->pDisplay, visual, 0, True);
+        glXMakeCurrent(_id->pDisplay, _id->id, _glContext);
     }
 
     void MyWindow::draw() {
         glClearColor(0.0, 0.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glXSwapBuffers(_id->pDisplay, _id->windowID);
+        #if defined(__linux__)
+        glXSwapBuffers(_id->pDisplay, _id->id);
+        #endif
+    }
+
+    Display* MyWindow::getDisplayPtr() {
+        return _id->pDisplay;
     }
 }

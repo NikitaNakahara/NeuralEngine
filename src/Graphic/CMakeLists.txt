@@ -9,4 +9,3 @@ target_include_directories(Graphic PUBLIC include)
 
 target_link_libraries(Graphic System)
 target_link_libraries(Graphic X11)
-target_link_libraries(Graphic GL)

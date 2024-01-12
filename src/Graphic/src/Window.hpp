@@ -3,23 +3,27 @@
 #include <string>
 
 #include <X11/Xlib.h>
+#include <GL/glx.h>
 
 namespace Graphic {
     struct WndID;
 
     class MyWindow {
     public:
-        MyWindow(int width, int height, std::string title, bool createFullscreen = false, WndID* __parentID = nullptr);
+        MyWindow(int __width, int __height, std::string __title, bool __createFullscreen = false, WndID* __parentID = nullptr);
         ~MyWindow();
 
-        void initGraphicContext();
+        void initOpenGLContext();
 
         void draw();
 
         WndID* getWindowID() { return _id; }
 
+        Display* getDisplayPtr();
+
     private:
         WndID* _id;
+        GLXContext _glContext;
         int _width, _height;
         std::string _title;
     };
