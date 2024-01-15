@@ -1,22 +1,20 @@
 #include <Core/Application.hpp>
 
-#include <Graphic/Graphic.hpp>
+#include <NeuralGL/ngl.hpp>
 #include <Core/InputManager.hpp>
 
 #include <System/Log.hpp>
 
+#include <unistd.h>
+
 namespace Core {
     void Application::launch() {
-        Graphic::Wnd *window = Graphic::createOpenGLWindow(1920, 1080, "NeuralEngine");
-        InputManager manager = InputManager(window->getWindowID());
+        ngl::NGLWindow *window = ngl::createWindow(1920, 1080, "NeuralEngine");
+        if (window == nullptr) System::logError("NGL", ngl::getLastError());
+        ngl::initOpenGLContext(window);
+        
+        sleep(5);
 
-        manager.setKeyPressCallback([](unsigned int key) {
-            System::logDebug("App", std::to_string(key));
-        });
-
-        while (!manager.windowShouldClose()) {
-            window->draw();
-            manager.updateEvents();
-        }
+        ngl::clearWindow(window);
     }
 }

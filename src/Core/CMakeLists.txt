@@ -9,6 +9,9 @@ add_executable(${PROJECT_NAME} ${SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 target_link_libraries(${PROJECT_NAME} System)
-target_link_libraries(${PROJECT_NAME} Graphic)
+#target_link_libraries(${PROJECT_NAME} Graphic)
 target_link_libraries(${PROJECT_NAME} X11)
 target_link_libraries(${PROJECT_NAME} GL)
+
+add_subdirectory(../../libs/NeuralGL ${CMAKE_CURRENT_BINARY_DIR}/ngl)
+target_link_libraries(${PROJECT_NAME} ngl)
