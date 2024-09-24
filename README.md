@@ -2,7 +2,7 @@
 ##### A futuristic game engine with neurointerface support
 
 ## Install from GitHub
-Open terminal and type `git clone https:\\github.com\NikitaNakahara\NeuralEngine
+Open terminal and type `git clone https:\\github.com\NikitaNakahara\NeuralEngine`
 
 ##### On ___Linux___
 Type a commands
