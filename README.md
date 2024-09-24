@@ -10,7 +10,7 @@ Type a commands
 cd NeuralEngine
 mkdir build
 cd build
-cmake ..
+cmake ../src
 make
 ```
 You can find executable file in folder **bin**
