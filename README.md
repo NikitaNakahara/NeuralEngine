@@ -26,4 +26,4 @@ mkdir build
 cd build
 next -c .. -o bin/NeuralEngine
 ```
-If you OS is ___Windows___, compiler put **.exe** automatically
+If your OS is ___Windows___, compiler put **.exe** automatically
