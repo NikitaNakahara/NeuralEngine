@@ -1,7 +1,10 @@
 #include <stdio.h>
 
+#include <Core/Engine.hpp>
+
 int main() {
-	printf("Hello, world\n");
+	Engine engine = Engine();
+	engine.launch();
 
 	return 0;
 }
